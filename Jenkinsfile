@@ -1,33 +1,30 @@
 pipeline {
-	agent {
-		docker {
-			image 'node:7.8.0'
-			args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
-		}
-	}
+    agent none 
     
     stages {
         stage('Checkout SCM') {
+            agent any 
             steps {
                 checkout scm
             }
         }
         
-        stage('Build') {
+        stage('Build & Test') {
+            agent {
+                docker { 
+                    image 'node:7.8.0' 
+                }
+            }
             steps {
                 echo 'Building NodeJS application...'
                 sh 'npm install'
-            }
-        }
-        
-        stage('Test') {
-            steps {
                 echo 'Running tests...'
                 sh 'npm test'
             }
         }
         
         stage('Docker build') {
+            agent any 
             steps {
                 script {
                     if (env.BRANCH_NAME == 'main') {
