@@ -1,9 +1,10 @@
 pipeline {
-    agent any
-    
-    tools {
-        nodejs 'Node15-installations' 
-    }
+    agent {
+		docker {
+			image 'node:7.8.0'
+			args '-v /var/run/docker.sock:/var/run/docker.sock -u root'
+		}
+	}
     
     stages {
         stage('Checkout SCM') {
